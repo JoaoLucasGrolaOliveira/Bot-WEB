@@ -1,0 +1,6 @@
+body {
+  background: #f0f4ff;
+}
+#login-page, #register-page {
+  background: rgba(0,0,0,0.03);
+}
