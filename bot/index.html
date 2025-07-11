@@ -5,8 +5,60 @@
   <title>Adonai Bot Web</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { background: #cacaca; }
-    #login-page, #register-page { background: rgba(0,0,0,0.03); }
+    :root {
+      --text-color:      #ffffff; 
+      --heading-color:   #ff9a02; 
+      --link-color:      #ff9a02; 
+    }
+
+    body {
+      background-image: url('adonai.png');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
+      background-size: 1300px 800px; 
+      color: var(--text-color);
+    }
+
+    #login-page,
+    #register-page {
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, var(--card-bg-opacity));
+      border: none;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      color: var(--text-color);
+    }
+
+    .card-title {
+      font-family: 'Segoe UI', sans-serif;
+      font-weight: bold;
+      color: var(--heading-color);
+    }
+
+    a {
+      color: var(--link-color);
+    }
+    a:hover {
+      color: darken(var(--link-color), 10%);
+      text-decoration: none;
+    }
+
+    #dashboard-page h3 {
+      color: var(--heading-color);
+    }
+
+    .btn-primary {
+      background-color: var(--link-color);
+      border-color: var(--link-color);
+    }
+    .btn-primary:hover {
+      background-color: darken(var(--link-color), 10%);
+      border-color: darken(var(--link-color), 10%);
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -88,7 +140,6 @@
     }
     let currentUser = null;
     const adminModal = new bootstrap.Modal(document.getElementById('adminModal'));
-
     function showPage(id){
       ['login-page','register-page','dashboard-page'].forEach(pid=>{
         document.getElementById(pid).classList.add('d-none');
@@ -97,12 +148,8 @@
     }
 
     window.addEventListener('load',()=>{
-      document.getElementById('show-register').onclick = e=>{
-        e.preventDefault(); showPage('register-page');
-      };
-      document.getElementById('show-login').onclick = e=>{
-        e.preventDefault(); showPage('login-page');
-      };
+      document.getElementById('show-register').onclick = e=>{ e.preventDefault(); showPage('register-page'); };
+      document.getElementById('show-login')   .onclick = e=>{ e.preventDefault(); showPage('login-page'); };
 
       document.getElementById('register-btn').onclick = ()=>{
         const u=document.getElementById('reg-user').value.trim(),
@@ -110,10 +157,10 @@
               p2=document.getElementById('reg-pass2').value,
               al=document.getElementById('register-alert');
         al.classList.add('d-none');
-        if(!u||!p){ al.textContent='Preencha todos os campos';al.classList.remove('d-none');return; }
-        if(p!==p2){ al.textContent='Senhas não coincidem';al.classList.remove('d-none');return; }
+        if(!u||!p){ al.textContent='Preencha todos os campos'; al.classList.remove('d-none'); return; }
+        if(p!==p2){ al.textContent='Senhas não coincidem'; al.classList.remove('d-none'); return; }
         let users=JSON.parse(localStorage.adonai_users);
-        if(users.find(x=>x.user===u)){ al.textContent='Usuário já existe';al.classList.remove('d-none');return; }
+        if(users.find(x=>x.user===u)){ al.textContent='Usuário já existe'; al.classList.remove('d-none'); return; }
         users.push({user:u,pass:p,isAdmin:false});
         localStorage.adonai_users = JSON.stringify(users);
         alert('Usuário cadastrado!');
@@ -126,7 +173,7 @@
               al=document.getElementById('login-alert'),
               users=JSON.parse(localStorage.adonai_users),
               usr=users.find(x=>x.user===u&&x.pass===p);
-        if(!usr){ al.textContent='Credenciais inválidas';return al.classList.remove('d-none'); }
+        if(!usr){ al.textContent='Credenciais inválidas'; return al.classList.remove('d-none'); }
         al.classList.add('d-none');
         currentUser=usr;
         document.getElementById('user-name').textContent=u;
@@ -146,45 +193,45 @@
         JSON.parse(localStorage.adonai_users).forEach(u=>{
           const li=document.createElement('li');
           li.className='list-group-item';
-          li.textContent = u.user + (u.isAdmin?' (ADM)':'');
-          li.onclick = ()=> {
+          li.textContent=u.user+(u.isAdmin?' (ADM)':'');
+          li.onclick=()=>{
             ul.querySelectorAll('li').forEach(x=>x.classList.remove('active'));
             li.classList.add('active');
           };
           ul.appendChild(li);
         });
       }
-      document.getElementById('admin-btn').onclick = ()=>{
+      document.getElementById('admin-btn').onclick=()=>{
         refreshUsers(); adminModal.show();
       };
-      document.getElementById('add-user-btn').onclick = ()=>{
+      document.getElementById('add-user-btn').onclick=()=>{
         const u=document.getElementById('new-user').value.trim(),
               p=document.getElementById('new-pass').value,
               ia=document.getElementById('new-admin').checked,
               al=document.getElementById('admin-alert');
         al.classList.add('d-none');
-        if(!u||!p){ al.textContent='Preencha todos os campos';return al.classList.remove('d-none'); }
+        if(!u||!p){ al.textContent='Preencha todos os campos'; return al.classList.remove('d-none'); }
         let users=JSON.parse(localStorage.adonai_users);
-        if(users.find(x=>x.user===u)){ al.textContent='Usuário já existe';return al.classList.remove('d-none'); }
+        if(users.find(x=>x.user===u)){ al.textContent='Usuário já existe'; return al.classList.remove('d-none'); }
         users.push({user:u,pass:p,isAdmin:ia});
-        localStorage.adonai_users = JSON.stringify(users);
+        localStorage.adonai_users=JSON.stringify(users);
         document.getElementById('new-user').value='';
         document.getElementById('new-pass').value='';
         document.getElementById('new-admin').checked=false;
         refreshUsers();
       };
-      document.getElementById('del-user-btn').onclick = ()=>{
+      document.getElementById('del-user-btn').onclick=()=>{
         const sel=document.querySelector('#users-list li.active');
         if(!sel) return alert('Selecione um usuário');
         const u=sel.textContent.split(' ')[0];
         if(u===currentUser.user) return alert('Não pode excluir você mesmo');
         if(!confirm(`Excluir ${u}?`)) return;
         let users=JSON.parse(localStorage.adonai_users).filter(x=>x.user!==u);
-        localStorage.adonai_users = JSON.stringify(users);
+        localStorage.adonai_users=JSON.stringify(users);
         refreshUsers();
       };
 
-      document.getElementById('camp-file').onchange = async e=>{
+      document.getElementById('camp-file').onchange=async e=>{
         const f=e.target.files[0];
         const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});
         const ws=wb.Sheets[wb.SheetNames[0]];
@@ -192,7 +239,7 @@
         alert(`Campanha carregada: ${data.length} linhas`);
       };
 
-      document.getElementById('process-btn').onclick = async ()=>{
+      document.getElementById('process-btn').onclick=async ()=>{
         const f=document.getElementById('sales-file').files[0];
         if(!f) return alert('Selecione a planilha de vendas');
         const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});
@@ -205,10 +252,7 @@
           Justificativa: "Preço OK"
         }));
         const outWB=XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(outWB,
-          XLSX.utils.json_to_sheet(results),
-          'Resultado'
-        );
+        XLSX.utils.book_append_sheet(outWB,XLSX.utils.json_to_sheet(results),'Resultado');
         XLSX.writeFile(outWB,'resultado_corretos.xlsx');
       };
 
